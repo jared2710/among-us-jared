@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Player</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<style>
+			body
+			{
+				background-color: #edf0f5;
+			}
+			
+			#main-panel
+			{
+				width:80%;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:50px;
+			}
+			
+		</style>
+		
+		<script>
+		
+		function openReportBody()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllAlivePeople"
+				}), success: function(res)
+				{
+					var people = res.data;
+					$("#alivePeople").empty();
+					for(var i = 0; i < people.length; i++)
+					{
+						var cur = people[i];
+						$("#alivePeople").append('<div class="radio"><label><input id="alive' + cur.id + '" type="radio" name="alivePeopleName" checked>' + cur.name + ', ' + cur.colour + '</label></div>');
+					}
+					
+					$("#reportBodyModal").modal('show');
+				}
+			});
+
+		}
+		
+		function reportBody()
+		{
+			var val = $("input[name=alivePeopleName]:checked").attr('id');
+			val = parseInt(val.substring(5));
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "reportBody",
+					"id": val
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "player.html";
+				}
+			});
+		}
+		
+		function enterID()
+		{
+			var id = parseInt($("#my_id").val());
+			localStorage.setItem("player_id", id);
+			loadTasks();
+		}
+		
+		
+		function loadTasks()
+		{
+			$("#tasks").empty();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getTasksForPerson",
+					"person_id": parseInt($("#my_id").val())
+				}), success: function(res)
+				{
+					//alert(JSON.stringify(res.data));
+					for (var key in res.data)
+					{
+						//alert(key);
+						key = key.substring(5);
+						//alert(key);
+						key = parseInt(key);
+						$("#tasks").append('<li id="task' + key + '" class="list-group-item row"></li>');
+						$.ajax({
+							url: '/',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								"type": "getTaskForPerson",
+								"id": key,
+								"person_id": parseInt($("#my_id").val())
+							}), success: function(res)
+							{
+								if(res.data.done)
+								{
+									res.data.done = 'done'
+								}
+								else
+								{
+									res.data.done = 'nope'
+								}
+								$("#task" + res.data.id).html("<div class='col-xs-8 col-sm-8 col-md-8 col-lg-8'>" + res.data.task.name + '<br>(' + res.data.task.location + ')</div><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:right"><span class="badge">' + res.data.done + '</span></div>');
+							}
+						});
+					
+					}
+					
+					//window.location.href = "player.html";
+				}
+			});
+		}
+		
+		function startOff()
+		{
+			if (localStorage.getItem("player_id") === null)
+			{
+				
+			}
+			else
+			{
+				$("#my_id").val(localStorage.getItem("player_id"));
+				enterID();
+			}
+		}
+		
+		
+		
+		</script>
+	</head>
+	<body onload="startOff()">
+		
+		
+		<div id="main-panel" class="panel panel-default">
+			<div class="panel-heading">Player Console</div>
+			<div class="panel-body">
+			
+			<div class="row">
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center">
+					<div class="form-group">
+					  <label for="my_id">My ID:</label>
+					  <input type="text" class="form-control" id="my_id">
+					</div>
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top:20px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<button type="button" class="btn btn-primary" onclick="enterID()">Refresh Tasks</button>
+				</div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<ul id="tasks" class="list-group">
+					</ul>
+				</div>
+			</div>
+			
+			
+			<div class="row" style="margin-top:20px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<button type="button" class="btn btn-danger" onclick="openReportBody()">Report Body</button>
+				</div>
+			</div>
+			
+			</div>
+		</div>
+		
+		
+		<div id="reportBodyModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Report Body</h4>
+				</div>
+				<div class="modal-body">
+					<div id="alivePeople">
+						
+					</div>
+					<button type="button" class="btn btn-danger" onclick="reportBody()" style="margin-top:20px">Report This Body</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+			</div>
+		</div>
+	</body>
+</html>
