@@ -127,6 +127,7 @@ class Handler
 
 	respond(data)
 	{
+		this.checkWin();
 		this.writeChanges();
 		this.res.json({"status" : 1, "data" : data});
 	}
@@ -134,6 +135,103 @@ class Handler
 	error(message)
 	{
 		this.res.json({"status" : 0, "data" : message});
+	}
+	
+	checkWin()
+	{
+		//CHECK SABOTAGES
+		var cur_time = Date.now();
+		for(var i = 0; i < this.sabotages["sabotages"].length; i++)
+		{
+			if(this.sabotages["sabotages"][i]["happening"])
+			{
+				var diff = cur_time - this.sabotages["sabotages"][i]["time"];
+				diff = diff / 1000;
+				diff = this.sabotages["sabotages"][i]["total_time"] - diff;
+				if(diff <= 0)
+				{
+					this.gamestate["crewmates_win"] = false;
+					this.gamestate["imposters_win"] = true;
+					return;
+				}
+				else
+				{
+					this.gamestate["crewmates_win"] = false;
+					this.gamestate["imposters_win"] = false;
+				}
+			}
+			else
+			{
+				this.gamestate["crewmates_win"] = false;
+				this.gamestate["imposters_win"] = false;
+			}
+		}
+		
+		//CHECK TASKS DONE
+		
+		//get alive people
+		var people = [];
+		for(var i = 0; i < this.people["people"].length; i++)
+		{
+			if(! this.people["people"][i]["dead"])
+			{
+				people.push(this.people["people"][i]);
+			}
+		}
+		
+		//check if their tasks are done
+		var all_tasks_done = true;
+		for(var i = 0; i < people.length; i++)
+		{
+			for(var key in people[i]["tasks"])
+			{
+				all_tasks_done = all_tasks_done && people[i]["tasks"][key];
+			}
+		}
+		if(all_tasks_done)
+		{
+			this.gamestate["crewmates_win"] = true;
+			this.gamestate["imposters_win"] = false;
+			return;
+		}
+		else
+		{
+			this.gamestate["crewmates_win"] = false;
+			this.gamestate["imposters_win"] = false;
+		}
+		
+		//CHECK NUM CREWMATES V NUM IMPOSTORS
+		var crew = 0;
+		var imp = 0;
+		for(var i = 0; i < people.length; i++)
+		{
+			if(people[i]["imposter"])
+			{
+				imp += 1;
+			}
+			else
+			{
+				crew += 1;
+			}
+		}
+		if(imp == 0)
+		{
+			this.gamestate["crewmates_win"] = true;
+			this.gamestate["imposters_win"] = false;
+			return;
+		}
+		else if(crew <= imp)
+		{
+			this.gamestate["crewmates_win"] = false;
+			this.gamestate["imposters_win"] = true;
+			return;
+		}
+		else
+		{
+			this.gamestate["crewmates_win"] = false;
+			this.gamestate["imposters_win"] = false;
+		}
+		
 	}
 	
 	
@@ -274,6 +372,7 @@ class Handler
 		for(var i = 0; i < this.sabotages["sabotages"].length; i++)
 		{
 			this.sabotages["sabotages"][i]["happening"] = false;
+			this.sabotages["sabotages"][i]["time"] = -1;
 		}
 			
 		var start_true_end_false = json.start_true_end_false;
@@ -437,6 +536,7 @@ class Handler
 		if(!emergencies)
 		{
 			var id = json.id;
+			var time = json.time;
 			if(id < 0 || id >= this.sabotages["sabotages"].length)
 			{
 				this.error("Invalid sabotage id.");
@@ -450,6 +550,7 @@ class Handler
 				else
 				{
 					this.sabotages["sabotages"][id]["happening"] = true;
+					this.sabotages["sabotages"][id]["time"] = time;
 					this.respond("Sabotage " + id + " (" + this.sabotages["sabotages"][id]["name"] + ", " + this.sabotages["sabotages"][id]["location"] + ") started.");
 				}
 			}
@@ -503,6 +604,7 @@ class Handler
 				if(this.sabotages["sabotages"][id]["happening"])
 				{
 					this.sabotages["sabotages"][id]["happening"] = false;
+					this.sabotages["sabotages"][id]["time"] = -1;
 					this.respond("Sabotage " + id + " (" + this.sabotages["sabotages"][id]["name"] + ", " + this.sabotages["sabotages"][id]["location"] + ") ended.");
 				}
 				else
@@ -519,6 +621,7 @@ class Handler
 		for(var i = 0; i < this.sabotages["sabotages"].length; i++)
 		{
 			this.sabotages["sabotages"][i]["happening"] = false;
+			this.sabotages["sabotages"][i]["time"] = -1;
 		}
 		this.respond("All sabotages ended.");
 	}

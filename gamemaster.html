@@ -205,7 +205,7 @@
 				}), success: function(res)
 				{
 					var sabotages = res.data;
-					
+					console.log(sabotages);
 					$("#sabotages").empty();
 					for(var i = 0; i < sabotages.length; i++)
 					{
@@ -221,7 +221,20 @@
 							happening_string = '<button type="button" class="btn btn-default" onclick="callSabotage(' + i + ')">NO</button>'
 						}
 						
-						$("#sabotages").append('<tr><td>' + cur.name + '</td><td>' + cur.location + '</td><td>' + happening_string + '</td></tr>');
+						var time_string = "";
+						if(cur.time == -1)
+						{
+							time_string = "-"
+						}
+						else
+						{
+							var diff = Date.now() - cur.time;
+							diff = diff / 1000;
+							diff = cur.total_time - diff;
+							time_string = Math.round(diff,2) + "s"
+						}
+						
+						$("#sabotages").append('<tr><td>' + cur.name + '</td><td>' + cur.location + '</td><td>' + happening_string + '</td><td>' + time_string + '</td></tr>');
 					}
 				}
 			});
@@ -236,7 +249,8 @@
 				contentType: 'application/json',
 				data: JSON.stringify({
 					"type": "callSabotage",
-					"id": id
+					"id": id,
+					"time": Date.now()
 				}), success: function(res)
 				{
 					alert(res.data);
@@ -445,6 +459,7 @@
 							<th>Name</th>
 							<th>Location</th>
 							<th>Happening</th>
+							<th>Time Left</th>
 						  </tr>
 						</thead>
 						<tbody id="sabotages">

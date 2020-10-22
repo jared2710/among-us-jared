@@ -100,8 +100,13 @@
 					{
 						if(sabotages_details[i].happening)
 						{
+							var diff = Date.now() - sabotages_details[i].time;
+							diff = diff / 1000;
+							diff = sabotages_details[i].total_time - diff;
+							time_string = Math.round(diff,2) + "s"
+							
 							sabotage_happening = true;
-							sabotage_string = sabotages_details[i].name + " - " + sabotages_details[i].location;
+							sabotage_string = sabotages_details[i].name + " - " + sabotages_details[i].location + " (" + time_string + ")";
 							break;
 						}
 					}
@@ -112,7 +117,7 @@
 						$("#hiddenDesc").text("CREWMATES WIN");
 						$("#hiddenPanel").show();
 					}
-					if(gamestate_details.imposters_win)
+					else if(gamestate_details.imposters_win)
 					{
 						$("#mainPanel").hide();
 						$("#hiddenDesc").text("IMPOSTERS WIN");
@@ -275,7 +280,8 @@
 				contentType: 'application/json',
 				data: JSON.stringify({
 					"type": "callSabotage",
-					"id": val
+					"id": val,
+					"time": Date.now()
 				}), success: function(res)
 				{
 					alert(res.data);
@@ -294,7 +300,7 @@
 			{
 				$("#my_id").val(localStorage.getItem("player_id"));
 				enterID();
-				setInterval(loadGameState, 2000);
+				setInterval(loadGameState, 1000);
 			}
 		}
 		
