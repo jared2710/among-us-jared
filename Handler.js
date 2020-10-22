@@ -271,9 +271,14 @@ class Handler
 			
 			this.respond("Person " + id + " (" + this.people["people"][id]["name"] + ", " + this.people["people"][id]["colour"] + ") dead and sabotages cleared.")
 		}*/
+		for(var i = 0; i < this.sabotages["sabotages"].length; i++)
+		{
+			this.sabotages["sabotages"][i]["happening"] = false;
+		}
+			
 		var start_true_end_false = json.start_true_end_false;
 		this.gamestate["reported_body"] = start_true_end_false;
-		this.respond("Body reported meeting in progress: " + start_true_end_false);
+		this.respond("Body reported meeting in progress: " + start_true_end_false + " and sabotages stopped");
 	}
 	
 	makeAllPeopleAlive(json)
