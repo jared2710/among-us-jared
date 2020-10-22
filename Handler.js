@@ -255,7 +255,7 @@ class Handler
 	
 	reportBody(json)
 	{
-		var id = json.id;
+		/*var id = json.id;
 		if(id < 0 || id >= this.people["people"].length)
 		{
 			this.error("Invalid person id");
@@ -270,7 +270,10 @@ class Handler
 			}
 			
 			this.respond("Person " + id + " (" + this.people["people"][id]["name"] + ", " + this.people["people"][id]["colour"] + ") dead and sabotages cleared.")
-		}
+		}*/
+		var start_true_end_false = json.start_true_end_false;
+		this.gamestate["reported_body"] = start_true_end_false;
+		this.respond("Body reported meeting in progress: " + start_true_end_false);
 	}
 	
 	makeAllPeopleAlive(json)
@@ -382,7 +385,27 @@ class Handler
 	
 	getGameState(json)
 	{
-		this.respond(JSON.stringify(this.gamestate));
+		var id = json.id;
+		if(id == -1)
+		{
+			this.respond(this.gamestate);
+		}
+		else
+		{
+			if(id < 0 || id >= this.people["people"].length)
+			{
+				this.error("Invalid person id.");
+			}
+			else
+			{
+				var build = {};
+				build["gamestate"] = this.gamestate;
+				build["person"] = this.people["people"][id];
+				build["sabotages"] = this.sabotages["sabotages"];
+				this.respond(build);
+			}
+		}
+		
 	}
 	
 	resetGameState(json)

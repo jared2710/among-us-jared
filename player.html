@@ -52,15 +52,16 @@
 		
 		function reportBody()
 		{
-			var val = $("input[name=alivePeopleName]:checked").attr('id');
-			val = parseInt(val.substring(5));
+			/*var val = $("input[name=alivePeopleName]:checked").attr('id');
+			val = parseInt(val.substring(5));*/
 			$.ajax({
 				url: '/',
 				type: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify({
 					"type": "reportBody",
-					"id": val
+					"start_true_end_false": true/*,
+					"id": val*/
 				}), success: function(res)
 				{
 					alert(res.data);
@@ -74,6 +75,100 @@
 			var id = parseInt($("#my_id").val());
 			localStorage.setItem("player_id", id);
 			loadTasks();
+		}
+		
+		function loadGameState()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getGameState",
+					"id": parseInt($("#my_id").val())
+				}), success: function(res)
+				{
+					var gamestate = res.data;
+					console.log(gamestate);
+					var gamestate_details = gamestate.gamestate;
+					var person_details = gamestate.person;
+					
+					var sabotages_details = gamestate.sabotages;
+					var sabotage_happening = false;
+					var sabotage_string = "";
+					for(var i = 0; i < sabotages_details.length; i++)
+					{
+						if(sabotages_details[i].happening)
+						{
+							sabotage_happening = true;
+							sabotage_string = sabotages_details[i].name + " - " + sabotages_details[i].location;
+							break;
+						}
+					}
+					
+					if(gamestate_details.crewmates_win)
+					{
+						$("#mainPanel").hide();
+						$("#hiddenDesc").text("CREWMATES WIN");
+						$("#hiddenPanel").show();
+					}
+					if(gamestate_details.imposters_win)
+					{
+						$("#mainPanel").hide();
+						$("#hiddenDesc").text("IMPOSTERS WIN");
+						$("#hiddenPanel").show();
+					}
+					else if(gamestate_details.emergency_meeting)
+					{
+						$("#mainPanel").hide();
+						$("#hiddenDesc").text("EMERGENCY MEETING");
+						$("#hiddenPanel").show();
+					}
+					else if(gamestate_details.reported_body)
+					{
+						$("#mainPanel").hide();
+						$("#hiddenDesc").text("BODY REPORTED");
+						$("#hiddenPanel").show();
+					}
+					else if(person_details.dead)
+					{
+						$("#mainPanel").hide();
+						$("#hiddenDesc").text("DEAD");
+						$("#hiddenPanel").show();
+					}
+					else
+					{
+						$("#hiddenPanel").hide();
+						$("#hiddenDesc").text("");
+						$("#mainPanel").show();
+					}
+					
+					if(person_details.imposter)
+					{
+						$("#imposterPanel").show();
+					}
+					else
+					{
+						$("#imposterPanel").hide();
+					}
+					
+					
+					if(sabotage_happening)
+					{
+						$("#sabotage_button").attr("onclick", "");
+						$("#emergencyDetails").text(sabotage_string);
+						$("#emergencyPanel").show();
+					}
+					else
+					{
+						$("#sabotage_button").attr("onclick", "openSabotage()");
+						$("#emergencyDetails").text("");
+						$("#emergencyPanel").hide();
+					}
+					
+					
+				}
+			});
 		}
 		
 		
@@ -127,6 +222,67 @@
 			});
 		}
 		
+		
+		
+		function iAmDead()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "makePersonDead",
+					"id": parseInt($("#my_id").val()),
+					"dead": true
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "player.html";
+				}
+			});
+		}
+		
+		function openSabotage()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllSabotages"
+				}), success: function(res)
+				{
+					console.log(res.data);
+					for(var i = 0; i < res.data.length; i++)
+					{
+						$("#sabotageOptions").append('<div class="radio"><label><input id="sab_' + i + '"+ type="radio" name="sabotageopt" checked>' + res.data[i].name + " - " + res.data[i].location + '</label></div>');
+					}
+					$("#sabotageModal").modal('show');
+				}
+			});
+			
+		}
+		
+		function sabotage()
+		{
+			var val = $("input[name=sabotageopt]:checked").attr('id');
+			val = parseInt(val.substring(4));
+			console.log(val);
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "callSabotage",
+					"id": val
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "player.html";
+				}
+			});
+		}
+		
 		function startOff()
 		{
 			if (localStorage.getItem("player_id") === null)
@@ -137,6 +293,7 @@
 			{
 				$("#my_id").val(localStorage.getItem("player_id"));
 				enterID();
+				setInterval(loadGameState, 2000);
 			}
 		}
 		
@@ -148,59 +305,84 @@
 		
 		
 		<div id="main-panel" class="panel panel-default">
-			<div class="panel-heading">Player Console</div>
-			<div class="panel-body">
-			
-			<div class="row">
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-				</div>
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center">
-					<div class="form-group">
-					  <label for="my_id">My ID:</label>
-					  <input type="text" class="form-control" id="my_id">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="font-size:14px;margin-top:7px">
+						Player Console
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<input type="text" class="form-control" id="my_id">
 					</div>
 				</div>
-				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-				</div>
 			</div>
-			
-			<div class="row" style="margin-top:20px">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-					<button type="button" class="btn btn-primary" onclick="enterID()">Refresh Tasks</button>
-				</div>
+			<div id="hiddenPanel" class="panel-body" style="display:none;text-align:center;margin-top:25px;margin-bottom:35px">
+				<h1 id="hiddenDesc"></h1>
 			</div>
-			<div class="row" style="margin-top:10px">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<ul id="tasks" class="list-group">
-					</ul>
+			<div id="mainPanel" class="panel-body" style="display:none">
+				
+				<div id="emergencyPanel" class="row" style="margin-bottom:20px;display:none">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h2>EMERGENCY!</h2>
+						<div id="emergencyDetails"></div>
+					</div>
 				</div>
-			</div>
-			
-			
-			<div class="row" style="margin-top:20px">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-					<button type="button" class="btn btn-danger" onclick="openReportBody()">Report Body</button>
+				
+				
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h4>Tasks</h4>
+					</div>
 				</div>
-			</div>
+				<div class="row" style="margin-top:5px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<ul id="tasks" class="list-group">
+						</ul>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button type="button" class="btn btn-primary" onclick="enterID()">Refresh Tasks</button>
+					</div>
+				</div>
+				
+				
+				<div class="row" style="margin-top:20px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h4>Actions</h4>
+					</div>
+				</div>
+				<div class="row" style="margin-top:10px">
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:right">
+						<button type="button" class="btn btn-danger" onclick="reportBody()">Report Body</button>
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:left">
+						<button type="button" class="btn btn-warning" onclick="iAmDead()">I am Dead</button>
+					</div>
+				</div>
+				
+				
+				<div id="imposterPanel" class="row" style="margin-top:30px;display:none">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button id="sabotage_button" type="button" class="btn btn-basic" onclick="openSabotage()">Sabotage</button>
+					</div>
+				</div>
 			
 			</div>
 		</div>
 		
-		
-		<div id="reportBodyModal" class="modal fade" role="dialog">
+		<div id="sabotageModal" class="modal fade" role="dialog">
 			<div class="modal-dialog">
 
-			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Report Body</h4>
+					<h4 class="modal-title">Sabotage</h4>
 				</div>
 				<div class="modal-body">
-					<div id="alivePeople">
+					<div id="sabotageOptions">
 						
 					</div>
-					<button type="button" class="btn btn-danger" onclick="reportBody()" style="margin-top:20px">Report This Body</button>
+					<button type="button" class="btn btn-basic" onclick="sabotage()" style="margin-top:20px">Sabotage</button>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -278,6 +278,97 @@
 			});
 		}
 		
+		function fillGameStateTable()
+		{	  		  
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getGameState",
+					"id": -1
+				}), success: function(res)
+				{
+					var gamestate = res.data;
+					console.log(gamestate);
+					
+					$("#status_emergency_meeting").text(gamestate.emergency_meeting);
+					$("#status_body_reported").text(gamestate.reported_body);
+					$("#status_crewmates_win").text(gamestate.crewmates_win);
+					$("#status_imposters_win").text(gamestate.imposters_win);
+					
+				}
+			});
+		}
+		
+		function startEmergencyMeeting()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "emergencyMeeting",
+					"start_true_end_false": true
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function endEmergencyMeeting()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "emergencyMeeting",
+					"start_true_end_false": false
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function startBodyReported()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "reportBody",
+					"start_true_end_false": true
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function endBodyReported()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "reportBody",
+					"start_true_end_false": false
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
 		
 		
 		
@@ -286,6 +377,7 @@
 		{
 			fillPeopleTable();
 			fillSabotagesTable();
+			fillGameStateTable();
 		}
 		
 		
@@ -324,17 +416,17 @@
 				</div>
 			</div>
 			
-			<div class="row" style="margin-top:10px">
-				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+			<div class="row" style="margin-top:0px">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
 					<button type="button" class="btn btn-danger" onclick="clearPeople()">Clear People</button>
 				</div>
-				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
 					<button type="button" class="btn btn-success" onclick="clearAndRandomAssignTasks()">Clear+Assign 2 Tasks</button>
 				</div>
-				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
 					<button type="button" class="btn btn-primary" onclick="makeAllPeopleAlive()">Make All Alive</button>
 				</div>
-				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
 					<button type="button" class="btn btn-warning" onclick="openAddPerson()">Add Person</button>
 				</div>
 			</div>
@@ -367,6 +459,57 @@
 				</div>
 				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:center">
 					<button type="button" class="btn btn-default" onclick="extra()">Extra</button>
+				</div>
+			</div>
+			
+			
+			<div class="row" style="margin-top:20px"> 
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<h3>Game State</h3>
+				</div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<table class="table table-hover table-bordered">
+						<thead>
+						  <tr>
+							<th>Element</th>
+							<th>Status</th>
+						  </tr>
+						</thead>
+						  <tr>
+							<td>Emergency Meeting</td>
+							<td id="status_emergency_meeting"></td>
+						  </tr>
+						  <tr>
+							<td>Body Reported</td>
+							<td id="status_body_reported"></td>
+						  </tr>
+						  <tr>
+							<td>Crewmates Win</td>
+							<td id="status_crewmates_win"></td>
+						  </tr>
+						  <tr>
+							<td>Imposters Win</td>
+							<td id="status_imposters_win"></td>
+						  </tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top:0px">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
+					<button type="button" class="btn btn-danger" onclick="startEmergencyMeeting()">Start Emergency Meeting</button>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
+					<button type="button" class="btn btn-success" onclick="endEmergencyMeeting()">Stop Emergency Meeting</button>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
+					<button type="button" class="btn btn-primary" onclick="startBodyReported()">Start Body Reported</button>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3" style="text-align:center;margin-top:10px">
+					<button type="button" class="btn btn-warning" onclick="endBodyReported()">Stop Body Reported</button>
 				</div>
 			</div>
 			
