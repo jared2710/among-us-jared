@@ -36,6 +36,9 @@ class Handler
 			case "getPerson":
 				this.getPerson(json);
 				break;
+			case "getAllPeople":
+				this.getAllPeople(json);
+				break;
 			case "getAllAlivePeople":
 				this.getAllAlivePeople(json);
 				break;
@@ -44,6 +47,12 @@ class Handler
 				break;
 			case "clearAndRandomAssignTasks":
 				this.clearAndRandomAssignTasks(json);
+				break;
+				
+				
+			
+			case "makePersonImposter":
+				this.makePersonImposter(json);
 				break;
 				
 			
@@ -87,6 +96,9 @@ class Handler
 				break;
 			case "getSabotage":
 				this.getSabotage(json);
+				break;
+			case "getAllSabotages":
+				this.getAllSabotages(json);
 				break;
 			case "endSabotage":
 				this.endSabotage(json);
@@ -133,7 +145,7 @@ class Handler
 		var name = json.name;
 		var colour = json.colour;
 		this.people["people"].push({"id": id, "name": name, "colour": colour, "dead": false, "imposter": false, "tasks": []});
-		this.respond("Person added with id " + id);
+		this.respond("Person added with id " + id + ".");
 	}
 	
 	getPerson(json)
@@ -147,6 +159,11 @@ class Handler
 		{
 			this.respond(JSON.stringify(this.people["people"][id]));
 		}
+	}
+	
+	getAllPeople(json)
+	{
+		this.respond(this.people["people"]);
 	}
 	
 	getAllAlivePeople(json)
@@ -202,24 +219,37 @@ class Handler
 	
 	
 	
-	makePersonDead(json)
+	makePersonImposter(json)
 	{
 		var id = json.id;
+		var imposter = json.imposter;
 		if(id < 0 || id >= this.people["people"].length)
 		{
 			this.error("Invalid person id");
 		}
 		else
 		{
-			if(this.people["people"][id]["dead"])
-			{
-				this.respond("That person is already dead.");
-			}
-			else
-			{
-				this.people["people"][id]["dead"] = true;
-				this.respond("Person " + id + " (" + this.people["people"][id]["name"] + ", " + this.people["people"][id]["colour"] + ") is now dead");
-			}
+			this.people["people"][id]["imposter"] = imposter;
+			this.respond("Person " + id + " (" + this.people["people"][id]["name"] + ", " + this.people["people"][id]["colour"] + ") is imposter: " + imposter);
+		}
+	}
+	
+	
+	
+	
+	
+	makePersonDead(json)
+	{
+		var id = json.id;
+		var dead = json.dead;
+		if(id < 0 || id >= this.people["people"].length)
+		{
+			this.error("Invalid person id");
+		}
+		else
+		{
+			this.people["people"][id]["dead"] = dead;
+			this.respond("Person " + id + " (" + this.people["people"][id]["name"] + ", " + this.people["people"][id]["colour"] + ") is dead: " + dead);
 		}
 	}
 	
@@ -413,6 +443,11 @@ class Handler
 		{
 			this.respond(JSON.stringify(this.sabotages["sabotages"][id]));
 		}
+	}
+	
+	getAllSabotages(json)
+	{
+		this.respond(this.sabotages["sabotages"]);
 	}
 
 	

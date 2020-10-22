@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>GameMaster</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<style>
+			body
+			{
+				background-color: #edf0f5;
+			}
+			
+			#main-panel
+			{
+				width:80%;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:50px;
+				margin-bottom:50px;
+			}
+			
+		</style>
+		
+		<script>
+		
+		function fillPeopleTable()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllPeople"
+				}), success: function(res)
+				{
+					var people = res.data;
+					
+					$("#people").empty();
+					for(var i = 0; i < people.length; i++)
+					{
+						var cur = people[i];
+						
+						var task_string = "";
+						for (var key in cur.tasks)
+						{
+							task_string += key.substring(5) + "=" + cur.tasks[key] + " "
+						}
+						
+						var dead_string = "";
+						if(cur.dead)
+						{
+							dead_string = '<button type="button" class="btn btn-basic" onclick="makePersonDead(' + cur.id + ', ' + (!cur.dead) + ')">YES</button>'
+						}
+						else
+						{
+							dead_string = '<button type="button" class="btn btn-default" onclick="makePersonDead(' + cur.id + ', ' + (!cur.dead) + ')">NO</button>'
+						}
+						
+						var imp_string = "";
+						if(cur.imposter)
+						{
+							imp_string = '<button type="button" class="btn btn-danger" onclick="makeImposter(' + cur.id + ', ' + (!cur.imposter) + ')">YES</button>'
+						}
+						else
+						{
+							imp_string = '<button type="button" class="btn btn-default" onclick="makeImposter(' + cur.id + ', ' + (!cur.imposter) + ')">NO</button>'
+						}
+						
+						$("#people").append('<tr><td>' + cur.id + '</td><td>' + cur.name + '</td><td>' + cur.colour + '</td><td>' + dead_string + '</td><td>' + task_string + '</td><td>' + imp_string + '</td></tr>');
+					}
+				}
+			});
+
+		}
+		
+		function clearPeople()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "clearPeople"
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+
+		}
+		
+		function clearAndRandomAssignTasks()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "clearAndRandomAssignTasks",
+					"num_tasks": 2
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+
+		}
+		
+		function makeAllPeopleAlive()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "makeAllPeopleAlive"
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+
+		}
+		
+		function openAddPerson()
+		{
+			$("#addPersonModal").modal('show');
+		}
+		
+		function addPerson()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "addPerson",
+					"id": parseInt($("#new_person_id").val()),
+					"name": $("#new_person_name").val(),
+					"colour": $("#new_person_colour").val()
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+
+		}
+		
+		function makeImposter(id, imp)
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "makePersonImposter",
+					"id": id,
+					"imposter": imp
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function makePersonDead(id, dead)
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "makePersonDead",
+					"id": id,
+					"dead": dead
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		
+		
+		
+		
+		function fillSabotagesTable()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllSabotages"
+				}), success: function(res)
+				{
+					var sabotages = res.data;
+					
+					$("#sabotages").empty();
+					for(var i = 0; i < sabotages.length; i++)
+					{
+						var cur = sabotages[i];
+						
+						var happening_string = "";
+						if(cur.happening)
+						{
+							happening_string = '<button type="button" class="btn btn-danger" onclick="endSabotage(' + i + ')">YES</button>'
+						}
+						else
+						{
+							happening_string = '<button type="button" class="btn btn-default" onclick="callSabotage(' + i + ')">NO</button>'
+						}
+						
+						$("#sabotages").append('<tr><td>' + cur.name + '</td><td>' + cur.location + '</td><td>' + happening_string + '</td></tr>');
+					}
+				}
+			});
+
+		}
+		
+		function callSabotage(id)
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "callSabotage",
+					"id": id
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function endSabotage(id)
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "endSabotage",
+					"id": id
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		function endAllSabotages(id)
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "endAllSabotages"
+				}), success: function(res)
+				{
+					alert(res.data);
+					window.location.href = "gamemaster.html";
+				}
+			});
+		}
+		
+		
+		
+		
+		
+		function startOff()
+		{
+			fillPeopleTable();
+			fillSabotagesTable();
+		}
+		
+		
+		
+		</script>
+	</head>
+	<body onload="startOff()">
+		
+		
+		<div id="main-panel" class="panel panel-default">
+			<div class="panel-heading">GameMaster Console</div>
+			<div class="panel-body">
+			
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<h3>People</h3>
+				</div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<table class="table table-hover table-bordered">
+						<thead>
+						  <tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Colour</th>
+							<th>Dead</th>
+							<th>Tasks</th>
+							<th>Imposter</th>
+						  </tr>
+						</thead>
+						<tbody id="people">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+					<button type="button" class="btn btn-danger" onclick="clearPeople()">Clear People</button>
+				</div>
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+					<button type="button" class="btn btn-success" onclick="clearAndRandomAssignTasks()">Clear+Assign 2 Tasks</button>
+				</div>
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+					<button type="button" class="btn btn-primary" onclick="makeAllPeopleAlive()">Make All Alive</button>
+				</div>
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
+					<button type="button" class="btn btn-warning" onclick="openAddPerson()">Add Person</button>
+				</div>
+			</div>
+			
+			
+			<div class="row" style="margin-top:20px"> 
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<h3>Sabotages</h3>
+				</div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					<table class="table table-hover table-bordered">
+						<thead>
+						  <tr>
+							<th>Name</th>
+							<th>Location</th>
+							<th>Happening</th>
+						  </tr>
+						</thead>
+						<tbody id="sabotages">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:center">
+					<button type="button" class="btn btn-success" onclick="endAllSabotages()">End All Sabotages</button>
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:center">
+					<button type="button" class="btn btn-default" onclick="extra()">Extra</button>
+				</div>
+			</div>
+			
+			</div>
+		</div>
+		
+		
+		<div id="addPersonModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Add Person</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+					  <div class="form-group">
+						<label for="new_person_id">ID:</label>
+						<input type="text" class="form-control" id="new_person_id">
+					  </div>
+					  <div class="form-group">
+						<label for="new_person_name">Name:</label>
+						<input type="text" class="form-control" id="new_person_name">
+					  </div>
+					  <div class="form-group">
+						<label for="new_person_colour">Colour:</label>
+						<input type="text" class="form-control" id="new_person_colour">
+					  </div>
+					</form>
+					<button type="button" class="btn btn-warning" onclick="addPerson()" style="margin-top:20px">Add Person</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+			</div>
+		</div>
+	</body>
+</html>
