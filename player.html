@@ -253,6 +253,7 @@
 				}), success: function(res)
 				{
 					console.log(res.data);
+					$("#sabotageOptions").empty();
 					for(var i = 0; i < res.data.length; i++)
 					{
 						$("#sabotageOptions").append('<div class="radio"><label><input id="sab_' + i + '"+ type="radio" name="sabotageopt" checked>' + res.data[i].name + " - " + res.data[i].location + '</label></div>');
@@ -318,7 +319,7 @@
 			<div id="hiddenPanel" class="panel-body" style="display:none;text-align:center;margin-top:25px;margin-bottom:35px">
 				<h1 id="hiddenDesc"></h1>
 			</div>
-			<div id="mainPanel" class="panel-body" style="display:none">
+			<div id="mainPanel" class="panel-body">
 				
 				<div id="emergencyPanel" class="row" style="margin-bottom:20px;display:none">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
