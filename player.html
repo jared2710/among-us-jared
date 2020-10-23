@@ -64,7 +64,7 @@
 					"id": val*/
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "player.html";
 				}
 			});
@@ -150,11 +150,21 @@
 					
 					if(person_details.imposter)
 					{
-						$("#imposterPanel").show();
+						/*$("#buttons_1").removeClass("col-xs-6").removeClass("col-sm-6").removeClass("col-md-6").removeClass("col-lg-6");
+						$("#buttons_2").removeClass("col-xs-6").removeClass("col-sm-6").removeClass("col-md-6").removeClass("col-lg-6");
+						$("#buttons_1").addClass("col-xs-4").addClass("col-sm-4").addClass("col-md-4").addClass("col-lg-4");
+						$("#buttons_2").addClass("col-xs-4").addClass("col-sm-4").addClass("col-md-4").addClass("col-lg-4");*/
+						$("#buttons_2").hide();
+						$("#buttons_3").show();
 					}
 					else
 					{
-						$("#imposterPanel").hide();
+						/*$("#buttons_1").removeClass("col-xs-4").removeClass("col-sm-4").removeClass("col-md-4").removeClass("col-lg-4");
+						$("#buttons_2").removeClass("col-xs-4").removeClass("col-sm-4").removeClass("col-md-4").removeClass("col-lg-4");
+						$("#buttons_1").addClass("col-xs-6").addClass("col-sm-6").addClass("col-md-6").addClass("col-lg-6");
+						$("#buttons_2").addClass("col-xs-6").addClass("col-sm-6").addClass("col-md-6").addClass("col-lg-6");*/
+						$("#buttons_2").show();
+						$("#buttons_3").hide();
 					}
 					
 					
@@ -190,12 +200,12 @@
 					"person_id": parseInt($("#my_id").val())
 				}), success: function(res)
 				{
-					//alert(JSON.stringify(res.data));
+					///*alert*/console.log(JSON.stringify(res.data));
 					for (var key in res.data)
 					{
-						//alert(key);
+						///*alert*/console.log(key);
 						key = key.substring(5);
-						//alert(key);
+						///*alert*/console.log(key);
 						key = parseInt(key);
 						$("#tasks").append('<li id="task' + key + '" class="list-group-item row"></li>');
 						$.ajax({
@@ -241,7 +251,7 @@
 					"dead": true
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "player.html";
 				}
 			});
@@ -284,7 +294,7 @@
 					"time": Date.now()
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "player.html";
 				}
 			});
@@ -294,7 +304,7 @@
 		{
 			if (localStorage.getItem("player_id") === null)
 			{
-				
+				$("#start_button").show();
 			}
 			else
 			{
@@ -302,6 +312,22 @@
 				enterID();
 				setInterval(loadGameState, 1000);
 			}
+		}
+		
+		function startButtonPressed()
+		{
+			var id = $("#my_id").val();
+			if(id == "")
+			{
+				alert("Enter a valid ID!");
+			}
+			else
+			{
+				$("#start_button").hide();
+				enterID();
+				setInterval(loadGameState, 1000);
+			}
+			
 		}
 		
 		
@@ -317,7 +343,10 @@
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="font-size:14px;margin-top:7px">
 						Player Console
 					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<input type="submit" class="btn btn-success" id="start_button" value="Start" style="width:100%;display:none" onclick="startButtonPressed()">
+					</div>
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 						<input type="text" class="form-control" id="my_id">
 					</div>
 				</div>
@@ -325,7 +354,7 @@
 			<div id="hiddenPanel" class="panel-body" style="display:none;text-align:center;margin-top:25px;margin-bottom:35px">
 				<h1 id="hiddenDesc"></h1>
 			</div>
-			<div id="mainPanel" class="panel-body">
+			<div id="mainPanel" class="panel-body" style="display:none">
 				
 				<div id="emergencyPanel" class="row" style="margin-bottom:20px;display:none">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
@@ -359,20 +388,23 @@
 					</div>
 				</div>
 				<div class="row" style="margin-top:10px">
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:right">
+					<div id="buttons_1" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:right">
 						<button type="button" class="btn btn-danger" onclick="reportBody()">Report Body</button>
 					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:left">
+					<div id="buttons_2" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:left">
 						<button type="button" class="btn btn-warning" onclick="iAmDead()">I am Dead</button>
 					</div>
-				</div>
-				
-				
-				<div id="imposterPanel" class="row" style="margin-top:30px;display:none">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-						<button id="sabotage_button" type="button" class="btn btn-basic" onclick="openSabotage()">Sabotage</button>
+					<div id="buttons_3" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="text-align:left;display:none">
+						<button id="sabotage_button" type="button" class="btn btn-warning" onclick="openSabotage()">Sabotage</button>
 					</div>
 				</div>
+				
+				
+				<!--<div id="imposterPanel" class="row" style="margin-top:30px;display:none">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						
+					</div>
+				</div>-->
 			
 			</div>
 		</div>

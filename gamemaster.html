@@ -70,11 +70,52 @@
 							imp_string = '<button type="button" class="btn btn-default" onclick="makeImposter(' + cur.id + ', ' + (!cur.imposter) + ')">NO</button>'
 						}
 						
-						$("#people").append('<tr><td>' + cur.id + '</td><td>' + cur.name + '</td><td>' + cur.colour + '</td><td>' + dead_string + '</td><td>' + task_string + '</td><td>' + imp_string + '</td></tr>');
+						$("#people").append('<tr><td>' + cur.id + '</td><td>' + cur.name + '</td><td>' + cur.colour + '</td><td id="dead_string_' + cur.id + '">' + dead_string + '</td><td id="task_string_' + cur.id + '">' + task_string + '</td><td>' + imp_string + '</td></tr>');
 					}
 				}
 			});
 
+		}
+		
+		function refreshPeopleTable()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllPeople"
+				}), success: function(res)
+				{
+					var people = res.data;
+					
+					for(var i = 0; i < people.length; i++)
+					{
+						var cur = people[i];
+						
+						var task_string = "";
+						for (var key in cur.tasks)
+						{
+							task_string += key.substring(5) + "=" + cur.tasks[key] + " "
+						}
+						
+						var dead_string = "";
+						if(cur.dead)
+						{
+							dead_string = '<button type="button" class="btn btn-basic" onclick="makePersonDead(' + cur.id + ', ' + (!cur.dead) + ')">YES</button>'
+						}
+						else
+						{
+							dead_string = '<button type="button" class="btn btn-default" onclick="makePersonDead(' + cur.id + ', ' + (!cur.dead) + ')">NO</button>'
+						}
+						
+						$("#task_string_" + cur.id).html(task_string);
+						$("#dead_string_" + cur.id).html(dead_string);
+						
+						
+					}
+				}
+			});
 		}
 		
 		function clearPeople()
@@ -87,7 +128,7 @@
 					"type": "clearPeople"
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -105,8 +146,8 @@
 					"num_tasks": 2
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 
@@ -122,8 +163,8 @@
 					"type": "makeAllPeopleAlive"
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 
@@ -147,7 +188,7 @@
 					"colour": $("#new_person_colour").val()
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -166,7 +207,7 @@
 					"imposter": imp
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -184,7 +225,7 @@
 					"dead": dead
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -234,11 +275,58 @@
 							time_string = Math.round(diff,2) + "s"
 						}
 						
-						$("#sabotages").append('<tr><td>' + cur.name + '</td><td>' + cur.location + '</td><td>' + happening_string + '</td><td>' + time_string + '</td></tr>');
+						$("#sabotages").append('<tr><td>' + cur.name + '</td><td>' + cur.location + '</td><td id="happening_string_' + i + '">' + happening_string + '</td><td id="time_string_' + i + '">' + time_string + '</td></tr>');
 					}
 				}
 			});
 
+		}
+		
+		function refreshSabotagesTable()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllSabotages"
+				}), success: function(res)
+				{
+					var sabotages = res.data;
+					//console.log(sabotages);
+					for(var i = 0; i < sabotages.length; i++)
+					{
+						var cur = sabotages[i];
+						
+						var happening_string = "";
+						if(cur.happening)
+						{
+							happening_string = '<button type="button" class="btn btn-danger" onclick="endSabotage(' + i + ')">YES</button>'
+						}
+						else
+						{
+							happening_string = '<button type="button" class="btn btn-default" onclick="callSabotage(' + i + ')">NO</button>'
+						}
+						
+						var time_string = "";
+						if(cur.time == -1)
+						{
+							time_string = "-"
+						}
+						else
+						{
+							var diff = Date.now() - cur.time;
+							diff = diff / 1000;
+							diff = cur.total_time - diff;
+							time_string = Math.round(diff,2) + "s"
+						}
+						
+						$("#happening_string_" + i).html(happening_string);
+						$("#time_string_" + i).html(time_string);
+						
+					}
+				}
+			});
 		}
 		
 		function callSabotage(id)
@@ -253,7 +341,7 @@
 					"time": Date.now()
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -270,7 +358,7 @@
 					"id": id
 				}), success: function(res)
 				{
-					alert(res.data);
+					/*alert*/console.log(res.data);
 					window.location.href = "gamemaster.html";
 				}
 			});
@@ -286,8 +374,8 @@
 					"type": "endAllSabotages"
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 		}
@@ -326,8 +414,8 @@
 					"start_true_end_false": true
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 		}
@@ -343,8 +431,8 @@
 					"start_true_end_false": false
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 		}
@@ -360,8 +448,8 @@
 					"start_true_end_false": true
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
 		}
@@ -377,10 +465,18 @@
 					"start_true_end_false": false
 				}), success: function(res)
 				{
-					alert(res.data);
-					window.location.href = "gamemaster.html";
+					/*alert*/console.log(res.data);
+					//window.location.href = "gamemaster.html";
 				}
 			});
+		}
+		
+		
+		function refresh()
+		{
+			refreshPeopleTable();
+			refreshSabotagesTable();
+			fillGameStateTable();
 		}
 		
 		
@@ -392,6 +488,7 @@
 			fillPeopleTable();
 			fillSabotagesTable();
 			fillGameStateTable();
+			setInterval(refresh, 1000);
 		}
 		
 		
