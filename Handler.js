@@ -139,6 +139,7 @@ class Handler
 	
 	checkWin()
 	{
+		
 		//CHECK SABOTAGES
 		var cur_time = Date.now();
 		for(var i = 0; i < this.sabotages["sabotages"].length; i++)
@@ -169,11 +170,11 @@ class Handler
 		
 		//CHECK TASKS DONE
 		
-		//get alive people
+		//get alive non-imposters
 		var people = [];
 		for(var i = 0; i < this.people["people"].length; i++)
 		{
-			if(! this.people["people"][i]["dead"])
+			if(!this.people["people"][i]["dead"])
 			{
 				people.push(this.people["people"][i]);
 			}
@@ -183,11 +184,15 @@ class Handler
 		var all_tasks_done = true;
 		for(var i = 0; i < people.length; i++)
 		{
-			for(var key in people[i]["tasks"])
+			if(!people[i]["imposter"])
 			{
-				all_tasks_done = all_tasks_done && people[i]["tasks"][key];
+				for(var key in people[i]["tasks"])
+				{
+					all_tasks_done = all_tasks_done && people[i]["tasks"][key];
+				}
 			}
 		}
+		
 		if(all_tasks_done)
 		{
 			this.gamestate["crewmates_win"] = true;
@@ -411,10 +416,14 @@ class Handler
 			{
 				this.respond("That task is already done.");
 			}
+			else if(person["imposter"])
+			{
+				this.respond("Task " + id + " (" + this.tasks["tasks"][id]["name"] + ", " + this.tasks["tasks"][id]["location"] + ") is done for person " + person_id + " (" + this.people["people"][person_id]["name"] + ", " + this.people["people"][person_id]["colour"] + ").");
+			}
 			else
 			{
 				person["tasks"]["task_" + id] = true;
-				this.respond("Task " + id + " (" + this.tasks["tasks"][id]["name"] + ", " + this.tasks["tasks"][id]["location"] + ") is done for person " + person_id + " (" + this.people["people"][person_id]["name"] + ", " + this.people["people"][person_id]["colour"] + ").")
+				this.respond("Task " + id + " (" + this.tasks["tasks"][id]["name"] + ", " + this.tasks["tasks"][id]["location"] + ") is done for person " + person_id + " (" + this.people["people"][person_id]["name"] + ", " + this.people["people"][person_id]["colour"] + ").");
 			}
 		}
 	}

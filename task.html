@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Task</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<style>
+			body
+			{
+				background-color: #edf0f5;
+			}
+			
+			#main-panel
+			{
+				width:80%;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:50px;
+			}
+			
+			.task0buttonelement
+			{
+				height:100px;
+				width:80%;
+				margin:10px;
+				font-size:20px;
+			}
+			
+		</style>
+		
+		<script>
+		
+		var taskId = -1;
+		
+		function startButtonPressed()
+		{
+			closeTasks();
+			$("#donePanel").hide();
+			
+			var id = parseInt($("#task_id").val());
+			taskId = id;
+			
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getAllPeople"
+				}), success: function(res)
+				{
+					console.log(res.data);
+					//window.location.href = "player.html";
+					
+					
+					$("#playerOptions").empty();
+					for(var i = 0; i < res.data.length; i++)
+					{
+						var cur = res.data[i];
+						var tasks = cur.tasks;
+						console.log(tasks);
+						var putIn = false;
+						for(var key in tasks)
+						{
+							if(key == ("task_"+taskId))
+							{
+								if(!tasks[key])
+								{
+									putIn = true;
+								}
+							}
+						}
+						if(putIn)
+						{
+							$("#playerOptions").append('<div class="radio"><label><input id="person_' + cur.id + '"+ type="radio" name="personopt" checked>' + cur.name + " - " + cur.colour + '</label></div>');
+						}
+						
+					}
+					$("#mainPanel").show();
+				}
+			});
+			
+		}
+		
+		var playerId = -1;
+		
+		function selectPlayer()
+		{
+			var val = $("input[name=personopt]:checked").attr('id');
+			val = parseInt(val.substring(7));
+			playerId = val;
+			
+			openTask(taskId);
+		}
+		
+		function closeTasks()
+		{
+			$("#task_0").hide();
+			$("#task_1").hide();
+			$("#task_2").hide();
+			$("#task_3").hide();
+			$("#task_4").hide();
+			$("#task_5").hide();
+		}
+		
+		function openTask(task)
+		{
+			$("#mainPanel").hide();
+			switch(task)
+			{
+				case 0:
+					initTask0();
+					break;
+				default:
+					
+			}
+			$("#task_"+task).show();
+		}
+		
+		var task0_curClick = 0;
+		function initTask0()
+		{
+			task0_curClick = 0;
+			var pool = [1,2,3,4,5,6,7,8,9,10,11,12];
+			for(var i = 0; i < 12; i++)
+			{
+				var rand_pos = Math.floor(Math.random() * pool.length);
+				var to_put = pool.splice(rand_pos, 1);
+				$("#task0Button"+i).html("<button id='task0_button"+to_put+"' class='btn btn-primary task0buttonelement' onclick='task0_buttonClicked("+to_put+")'>" + to_put + "</button>");
+			}
+		}
+		
+		function task0_buttonClicked(num)
+		{
+			if(num == task0_curClick+1)
+			{
+				$("#task0_button"+num).removeClass("btn-primary");
+				$("#task0_button"+num).addClass("btn-success");
+				task0_curClick++;
+			}
+			if(task0_curClick == 12)
+			{
+				doneTask0();
+			}
+		}
+		
+		function doneTask0()
+		{
+			closeTasks();
+			$("#donePanelText").html("Player " + playerId + " done with Task " + taskId);
+			$("#donePanel").show();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "doTaskForPerson",
+					"id": taskId,
+					"person_id": playerId
+				}), success: function(res)
+				{
+					console.log(res.data);
+				}
+			});
+			
+			
+			setTimeout(startButtonPressed, 3000);
+			
+		}
+		
+		
+		</script>
+	</head>
+	<body>
+		
+		
+		<div id="main-panel" class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="font-size:14px;margin-top:7px">
+						Task Console
+					</div>
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<input type="submit" class="btn btn-success" id="start_button" value="Start" style="width:100%" onclick="startButtonPressed()">
+					</div>
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<input type="text" class="form-control" id="task_id">
+					</div>
+				</div>
+			</div>
+			<div id="mainPanel" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Who are You?</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="playerOptions" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<div>
+						
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-top:10px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button type="button" class="btn btn-primary" onclick="selectPlayer()">Select ID</button>
+					</div>
+				</div>
+			
+			</div>
+			<div id="donePanel" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Good job!</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:10px;margin-bottom:20px">
+					<div id="donePanelText" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						
+					</div>
+				</div>
+			
+			</div>
+			<div id="task_0" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 0</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task0Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<div class="row">
+							<div id="task0Button0" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button1" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button2" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button3" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button4" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button5" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button6" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button7" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button8" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button9" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button10" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+							<div id="task0Button11" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</body>
+</html>
