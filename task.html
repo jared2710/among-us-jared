@@ -217,7 +217,41 @@
 		}
 		function initTask2()
 		{
-
+			$("#task2Body0").show();
+		}
+		
+		function task2_question(num)
+		{
+			var val = $("input[name=task2_question"+num+"]:checked").attr("id") + "";
+			if(val != "undefined")
+			{
+				console.log(val);
+				$("#task2_button" + num).html("Assessing psychometry...");
+				$("#task2_button" + num).removeClass("btn-success");
+				$("#task2_button" + num).addClass("btn-default");
+				
+				
+				setTimeout(function()
+				{
+					$("#task2Body" + num).hide();
+					$("#task2_button" + num).html("Submit answer");
+					$("#task2_button" + num).removeClass("btn-default");
+					$("#task2_button" + num).addClass("btn-success");
+					
+					if(num == 4)
+					{
+						doneTask2();
+					}
+					else
+					{
+						$("#task2Body" + (num+1)).show();
+					}
+					
+					
+				}, 1500);
+			
+			}
+			
 		}
 		
 		function doneTask2()
@@ -504,8 +538,85 @@
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
-					<div id="task2Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-						<button class="btn btn-success" onclick="doneTask2()">Done Task</button>
+					<div id="task2Body0" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;display:none">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<h5>1) What are your feelings towards your crewmates?</h5>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<div class="radio"><label><input id="task2_question0_0" name="task2_question0" type="radio">I am happy to be a part of the team</label></div>
+								<div class="radio"><label><input id="task2_question0_1" name="task2_question0" type="radio">They are all liars and thieves</label></div>
+								<div class="radio"><label><input id="task2_question0_2" name="task2_question0" type="radio">I fear one of them may be trying to kill me</label></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;margin-top:15px">
+								<button id="task2_button0" class="btn btn-success" onclick="task2_question(0)">Submit Answer</button>
+							</div>
+						</div>
+					</div>
+					<div id="task2Body1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;display:none">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<h5>2) Have you experienced any homicidal thoughts in the last 24 hours?</h5>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<div class="radio"><label><input id="task2_question1_0" name="task2_question1" type="radio">Not that I can recall</label></div>
+								<div class="radio"><label><input id="task2_question1_1" name="task2_question1" type="radio">This feels remarkably like an accusation</label></div>
+								<div class="radio"><label><input id="task2_question1_2" name="task2_question1" type="radio">Once or twice, but only mild thoughts</label></div>
+								<div class="radio"><label><input id="task2_question1_3" name="task2_question1" type="radio">At least 436 times</label></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;margin-top:15px">
+								<button id="task2_button1" class="btn btn-success" onclick="task2_question(1)">Submit Answer</button>
+							</div>
+						</div>
+						
+					</div>
+					<div id="task2Body2" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;display:none">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<h5>3) Please choose the closest fit to your personality type.</h5>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<div class="radio"><label><input id="task2_question2_0" name="task2_question2" type="radio">Enjoys a long walk on the beach and commandeering spacecraft</label></div>
+								<div class="radio"><label><input id="task2_question2_1" name="task2_question2" type="radio">Have not showered in 3 days but all my assignments are finished</label></div>
+								<div class="radio"><label><input id="task2_question2_2" name="task2_question2" type="radio">Looking for somebody to hold me close and stand with me in emergency meetings</label></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;margin-top:15px">
+								<button id="task2_button2" class="btn btn-success" onclick="task2_question(2)">Submit Answer</button>
+							</div>
+						</div>
+						
+					</div>
+					<div id="task2Body3" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;display:none">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<h5>What are your feelings towards your crewmates?</h5>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<div class="radio"><label><input id="task2_question3_0" name="task2_question3" type="radio">I am happy to be a part of the team</label></div>
+								<div class="radio"><label><input id="task2_question3_1" name="task2_question3" type="radio">They are all liars and thieves</label></div>
+								<div class="radio"><label><input id="task2_question3_2" name="task2_question3" type="radio">I fear one of them may be trying to kill me</label></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;margin-top:15px">
+								<button id="task2_button3" class="btn btn-success" onclick="task2_question(3)">Submit Answer</button>
+							</div>
+						</div>
+						
+					</div>
+					<div id="task2Body4" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;display:none">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<h5>What are your feelings towards your crewmates?</h5>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+								<div class="radio"><label><input id="task2_question4_0" name="task2_question4" type="radio">I am happy to be a part of the team</label></div>
+								<div class="radio"><label><input id="task2_question4_1" name="task2_question4" type="radio">They are all liars and thieves</label></div>
+								<div class="radio"><label><input id="task2_question4_2" name="task2_question4" type="radio">I fear one of them may be trying to kill me</label></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;margin-top:15px">
+								<button id="task2_button4" class="btn btn-success" onclick="task2_question(4)">Submit Answer</button>
+							</div>
+						</div>
+						
 					</div>
 				</div>
 			
