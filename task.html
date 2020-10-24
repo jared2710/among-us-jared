@@ -115,6 +115,21 @@
 				case 0:
 					initTask0();
 					break;
+				case 1:
+					initTask1();
+					break;
+				case 2:
+					initTask2();
+					break;
+				case 3:
+					initTask3();
+					break;
+				case 4:
+					initTask4();
+					break;
+				case 5:
+					initTask5();
+					break;
 				default:
 					
 			}
@@ -172,6 +187,196 @@
 			setTimeout(startButtonPressed, 3000);
 			
 		}
+		function initTask1()
+		{
+
+		}
+		
+		function doneTask1()
+		{
+			closeTasks();
+			$("#donePanelText").html("Player " + playerId + " done with Task " + taskId);
+			$("#donePanel").show();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "doTaskForPerson",
+					"id": taskId,
+					"person_id": playerId
+				}), success: function(res)
+				{
+					console.log(res.data);
+				}
+			});
+			
+			setTimeout(startButtonPressed, 3000);
+			
+		}
+		function initTask2()
+		{
+
+		}
+		
+		function doneTask2()
+		{
+			closeTasks();
+			$("#donePanelText").html("Player " + playerId + " done with Task " + taskId);
+			$("#donePanel").show();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "doTaskForPerson",
+					"id": taskId,
+					"person_id": playerId
+				}), success: function(res)
+				{
+					console.log(res.data);
+				}
+			});
+			
+			setTimeout(startButtonPressed, 3000);
+			
+		}
+		
+		/*
+		var task1_drawing = false;
+		var task1_mousePos = false;
+		var task1_lastPos = false;
+		function initTask1()
+		{
+			var canvas = document.getElementById("task1_canvas");
+			var ctx = canvas.getContext("2d");
+			ctx.strokeStyle = "#222222";
+			ctx.lineWith = 2;
+			
+			task1_mousePos = { x:0, y:0 };
+			task1_lastPos = task1_mousePos;
+			canvas.addEventListener("mousedown", function (e) 
+			{
+				task1_drawing = true;
+				task1_lastPos = getMousePos(canvas, e);
+			}, false);
+			canvas.addEventListener("mouseup", function (e) 
+			{
+				task1_drawing = false;
+			}, false);
+			canvas.addEventListener("mousemove", function (e) 
+			{
+				task1_mousePos = getMousePos(canvas, e);
+			}, false);
+
+			// Get the position of the mouse relative to the canvas
+			function getMousePos(canvasDom, mouseEvent) 
+			{
+				var rect = canvasDom.getBoundingClientRect();
+				return {
+					x: mouseEvent.clientX - rect.left,
+					y: mouseEvent.clientY - rect.top
+				};
+			}
+			
+			window.requestAnimFrame = (function (callback)
+			{
+				return window.requestAnimationFrame || 
+				window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame ||
+				window.oRequestAnimationFrame ||
+				window.msRequestAnimaitonFrame ||
+				function (callback) 
+				{
+					window.setTimeout(callback, 1000/60);
+				};
+			})();
+			
+			// Draw to the canvas
+			function renderCanvas()
+			{
+				if (task1_drawing)
+				{
+					ctx.moveTo(task1_lastPos.x, task1_lastPos.y);
+					ctx.lineTo(task1_mousePos.x, task1_mousePos.y);
+					ctx.stroke();
+					task1_lastPos = task1_mousePos;
+				}
+			}
+
+			// Allow for animation
+			(function drawLoop ()
+			{
+				requestAnimFrame(drawLoop);
+				renderCanvas();
+			})();
+			
+			// Set up touch events for mobile, etc
+			canvas.addEventListener("touchstart", function (e) 
+			{
+				task1_mousePos = getTouchPos(canvas, e);
+				var touch = e.touches[0];
+				var mouseEvent = new MouseEvent("mousedown", 
+				{
+					clientX: touch.clientX,
+					clientY: touch.clientY
+				});
+				canvas.dispatchEvent(mouseEvent);
+			}, false);
+			canvas.addEventListener("touchend", function (e) 
+			{
+				var mouseEvent = new MouseEvent("mouseup", {});
+				canvas.dispatchEvent(mouseEvent);
+			}, false);
+			canvas.addEventListener("touchmove", function (e) 
+			{
+				var touch = e.touches[0];
+				var mouseEvent = new MouseEvent("mousemove", 
+				{
+					clientX: touch.clientX,
+					clientY: touch.clientY
+				});
+				canvas.dispatchEvent(mouseEvent);
+			}, false);
+
+			// Get the position of a touch relative to the canvas
+			function getTouchPos(canvasDom, touchEvent) 
+			{
+				var rect = canvasDom.getBoundingClientRect();
+				return {
+					x: touchEvent.touches[0].clientX - rect.left,
+					y: touchEvent.touches[0].clientY - rect.top
+				};
+			}
+			
+			// Prevent scrolling when touching the canvas
+			document.body.addEventListener("touchstart", function (e) 
+			{
+				if (e.target == canvas) 
+				{
+					e.preventDefault();
+				}
+			}, false);
+			document.body.addEventListener("touchend", function (e) 
+			{
+				if (e.target == canvas) 
+				{
+					e.preventDefault();
+				}
+			}, false);
+			document.body.addEventListener("touchmove", function (e) 
+			{
+				if (e.target == canvas) 
+				{
+					e.preventDefault();
+				}
+			}, false);
+			
+			
+		}
+		*/
 		
 		
 		</script>
@@ -226,6 +431,7 @@
 				</div>
 			
 			</div>
+			
 			<div id="task_0" class="panel-body" style="display:none">
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
@@ -276,6 +482,74 @@
 				</div>
 			
 			</div>
+			
+			<div id="task_1" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 1</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task1Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button class="btn btn-success" onclick="doneTask1()">Done Task</button>
+					</div>
+				</div>
+			
+			</div>
+			
+			<div id="task_2" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 2</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task2Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button class="btn btn-success" onclick="doneTask2()">Done Task</button>
+					</div>
+				</div>
+			
+			</div>
+			
+			<div id="task_3" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 31</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task3Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					</div>
+				</div>
+			
+			</div>
+			
+			<div id="task_4" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 4</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task4Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					</div>
+				</div>
+			
+			</div>
+			
+			<div id="task_5" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>Task 5</h3>
+					</div>
+				</div>
+				<div class="row" style="margin-top:0px">
+					<div id="task5Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+					</div>
+				</div>
+			
+			</div>
+			
 		</div>
 	</body>
 </html>
