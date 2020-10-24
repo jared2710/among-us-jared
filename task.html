@@ -30,6 +30,14 @@
 				font-size:20px;
 			}
 			
+			.task1buttonelement
+			{
+				height:100px;
+				width:80%;
+				margin:10px;
+				font-size:20px;
+			}
+			
 		</style>
 		
 		<script>
@@ -187,9 +195,128 @@
 			setTimeout(startButtonPressed, 3000);
 			
 		}
+		
+		var task1_sequences = [];
+		var task1_curSeq = 0;
+		var task1_curPlaceInSeq = 0;
+		var task1_colours = ["btn-primary", "btn-success", "btn-warning", "btn-danger"];
 		function initTask1()
 		{
-
+			for(var i = 0; i < 9; i++)
+			{
+				$("#task1Button"+i).html("<button id='task1_button"+i+"' class='btn btn-default task1buttonelement'></button>");
+			}
+			
+			task1_sequences = [];
+			task1_curSeq = 0;
+			task1_curPlaceInSeq = 0;
+			for(var i = 0; i < 4; i++)
+			{
+				var seq = "";
+				for(var j = 0; j < 4; j++)
+				{
+					var rand = Math.floor(Math.random()*9);
+					seq += rand;
+				}
+				//console.log(seq);
+				task1_sequences.push(seq);
+			}
+			
+			setTimeout(task1_playCurSequence, 1500);
+			
+		}
+		
+		function task1_playCurSequence()
+		{
+			task1_curPlaceInSeq = 0;
+			if(task1_curSeq == 4)
+			{
+				doneTask1();
+			}
+			else
+			{
+				setTimeout(task1_playCurSequenceCurPlace, 1000);
+			}
+			
+		}
+		
+		function task1_playCurSequenceCurPlace()
+		{
+			if(task1_curPlaceInSeq == 4)
+			{
+				for(var i = 0; i < 9; i++)
+				{
+					$("#task1_button"+i).removeClass("btn-default");
+					$("#task1_button"+i).removeClass("btn-success");
+					$("#task1_button"+i).removeClass("btn-danger");
+					$("#task1_button"+i).removeClass("btn-warning");
+					$("#task1_button"+i).removeClass("btn-primary");
+					$("#task1_button"+i).addClass("btn-default");
+				}
+				task1_beginListeningForSequence();
+			}
+			else
+			{
+				var toPlay = parseInt(task1_sequences[task1_curSeq][task1_curPlaceInSeq]);
+				//console.log(toPlay);
+				$("#task1_button"+toPlay).removeClass("btn-default");
+				$("#task1_button"+toPlay).removeClass("btn-success");
+				$("#task1_button"+toPlay).removeClass("btn-danger");
+				$("#task1_button"+toPlay).removeClass("btn-warning");
+				$("#task1_button"+toPlay).removeClass("btn-primary");
+				$("#task1_button"+toPlay).addClass(task1_colours[task1_curPlaceInSeq]);
+				task1_curPlaceInSeq++;
+				setTimeout(task1_playCurSequenceCurPlace, 1000);
+			}
+			
+		}
+		
+		function task1_beginListeningForSequence()
+		{
+			for(var i = 0; i < 9; i++)
+			{
+				$("#task1_button"+i).attr("onclick", "task1_buttonClicked("+i+")");
+			}
+			task1_curPlaceInSeq = 0;
+		}
+		
+		function task1_buttonClicked(num)
+		{
+			//console.log(num);
+			var corresponding = parseInt(task1_sequences[task1_curSeq][task1_curPlaceInSeq]);
+			//console.log(corresponding);
+			if(num == corresponding)
+			{
+				$("#task1_button"+num).removeClass("btn-default");
+				$("#task1_button"+num).removeClass("btn-success");
+				$("#task1_button"+num).removeClass("btn-danger");
+				$("#task1_button"+num).removeClass("btn-warning");
+				$("#task1_button"+num).removeClass("btn-primary");
+				$("#task1_button"+num).addClass(task1_colours[task1_curPlaceInSeq]);
+				task1_curPlaceInSeq++;
+			}
+			else
+			{
+				
+			}
+			
+			if(task1_curPlaceInSeq == 4)
+			{
+				//console.log("done");
+				task1_curSeq++;
+				for(var i = 0; i < 9; i++)
+				{
+					$("#task1_button"+i).attr("onclick", "");
+					$("#task1_button"+i).removeClass("btn-default");
+					$("#task1_button"+i).removeClass("btn-success");
+					$("#task1_button"+i).removeClass("btn-danger");
+					$("#task1_button"+i).removeClass("btn-warning");
+					$("#task1_button"+i).removeClass("btn-primary");
+					$("#task1_button"+i).addClass("btn-default");
+				}
+				task1_playCurSequence();
+				
+			}
 		}
 		
 		function doneTask1()
@@ -215,6 +342,7 @@
 			setTimeout(startButtonPressed, 3000);
 			
 		}
+		
 		function initTask2()
 		{
 			$("#task2_progressbar").css("width", "0%");
@@ -533,7 +661,35 @@
 				</div>
 				<div class="row" style="margin-top:0px">
 					<div id="task1Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-						<button class="btn btn-success" onclick="doneTask1()">Done Task</button>
+						<div class="row">
+							<div id="task1Button0" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button1" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button2" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button3" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button4" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button5" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button6" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button7" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+							<div id="task1Button8" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+								
+							</div>
+						</div>
 					</div>
 				</div>
 			
