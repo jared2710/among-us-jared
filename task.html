@@ -514,7 +514,7 @@
 		
 		function task3_drawMiddleCircle(i)
 		{
-			var radius = 20;
+			var radius = 25;
 			task3_ctxArr[i].beginPath();
 			task3_ctxArr[i].arc(task3_middleCirclePosArr[i][0], task3_middleCirclePosArr[i][1], radius, 0, 2 * Math.PI, false);
 			//task3_ctxArr[i].fill();
@@ -523,7 +523,7 @@
 		
 		function task3_drawMovingCircle(i)
 		{
-			var radius = 15;
+			var radius = 18;
 			task3_ctxArr[i].beginPath();
 			task3_ctxArr[i].arc(task3_circlePosArr[i][0], task3_circlePosArr[i][1], radius, 0, 2 * Math.PI, false);
 			task3_ctxArr[i].fill();
@@ -546,12 +546,18 @@
 		function task3_clickButton(i)
 		{
 			var cur_y = task3_circlePosArr[i][1];
-			var cur_top_y = cur_y + 7.5;
-			var cur_bot_y = cur_y - 7.5;
-			var mid_y = task3_canvasArr[i].height / 2;
-			var mid_top_y = mid_y + 10;
-			var mid_bot_y = cur_y - 10;
-			if(cur_top_y < mid_top_y && cur_bot_y > mid_bot_y)
+			var cur_top_y = cur_y - 9;
+			var cur_bot_y = cur_y + 9;
+			console.log("cur_y", cur_y);
+			console.log("cur_top_y", cur_top_y);
+			console.log("cur_bot_y", cur_bot_y);
+			var mid_y = task3_middleCirclePosArr[i][1];
+			var mid_top_y = mid_y - 16;
+			var mid_bot_y = mid_y + 16;
+			console.log("mid_y", mid_y);
+			console.log("mid_top_y", mid_top_y);
+			console.log("mid_bot_y", mid_bot_y);
+			if(cur_top_y > mid_top_y && cur_bot_y < mid_bot_y)
 			{
 				task3_whatIsDone[i] = true;
 			}
@@ -847,7 +853,7 @@
 					<div id="task3Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center;padding-top:10px">
 						<div class="row">
 							<div id="task3_holder0" class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
-								<canvas id="task3_canvas0" height="300" style="width:100%;margin-bottom:20px;border:1px solid black"></canvas>
+								<canvas id="task3_canvas0" height="300" style="width:100%;margin-bottom:20px"></canvas>
 								<button class="btn btn-success" onclick="task3_clickButton(0)">Capture</button>
 							</div>
 							<div id="task3_holder1" class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:center">
