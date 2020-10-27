@@ -599,6 +599,77 @@
 			
 		}
 		
+		function initTask4()
+		{
+			$("#task4_button").removeClass("btn-primary");
+			$("#task4_button").removeClass("btn-success");
+			$("#task4_button").removeClass("btn-warning");
+			$("#task4_button").removeClass("btn-danger");
+			$("#task4_button").addClass("btn-primary");
+			setTimeout(task4_flashColour, 500);
+		}
+		
+		function task4_flashColour()
+		{
+			if($("#task_4").css("display") == "none")
+			{
+				$("#task4_button").removeClass("btn-primary");
+				$("#task4_button").removeClass("btn-success");
+				$("#task4_button").removeClass("btn-warning");
+				$("#task4_button").removeClass("btn-danger");
+				$("#task4_button").addClass("btn-primary");
+			}
+			else
+			{
+				if($("#task4_button").hasClass("btn-primary"))
+				{
+					$("#task4_button").removeClass("btn-primary");
+					$("#task4_button").addClass("btn-success");
+				}
+				else if($("#task4_button").hasClass("btn-success"))
+				{
+					$("#task4_button").removeClass("btn-success");
+					$("#task4_button").addClass("btn-warning");
+				}
+				else if($("#task4_button").hasClass("btn-warning"))
+				{
+					$("#task4_button").removeClass("btn-warning");
+					$("#task4_button").addClass("btn-danger");
+				}
+				else if($("#task4_button").hasClass("btn-danger"))
+				{
+					$("#task4_button").removeClass("btn-danger");
+					$("#task4_button").addClass("btn-primary");
+				}
+				
+				setTimeout(task4_flashColour, 500);
+			}
+			
+		}
+		
+		function doneTask4()
+		{
+			closeTasks();
+			$("#donePanelText").html("Player " + playerId + " done with Task " + taskId);
+			$("#donePanel").show();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "doTaskForPerson",
+					"id": taskId,
+					"person_id": playerId
+				}), success: function(res)
+				{
+					console.log(res.data);
+				}
+			});
+			
+			setTimeout(startButtonPressed, 3000);
+		}
+		
 		</script>
 	</head>
 	<body>
@@ -880,8 +951,9 @@
 						<h3>Task 4</h3>
 					</div>
 				</div>
-				<div class="row" style="margin-top:0px">
+				<div class="row" style="margin-top:10px">
 					<div id="task4Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button id="task4_button" class="btn btn-primary" onclick="doneTask4()">Drink consumed</button>
 					</div>
 				</div>
 			
