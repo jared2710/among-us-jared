@@ -291,6 +291,7 @@ class Handler
 	clearAndRandomAssignTasks(json)
 	{
 		var num_tasks = json.num_tasks;
+		var num_non_drink_tasks = num_tasks - 2;
 		if(num_tasks > this.tasks["tasks"].length)
 		{
 			this.error("Too many tasks asked to be assigned.");
@@ -300,18 +301,20 @@ class Handler
 			for(var i = 0; i < this.people["people"].length; i++)
 			{
 				var avail_tasks = [];
-				for(var j = 0; j < this.tasks["tasks"].length; j++)
+				for(var j = 0; j < 4/*this.tasks["tasks"].length*/; j++)
 				{
 					avail_tasks.push(j);
 				}
 				
 				var my_tasks = {};
-				for(var j = 0; j < num_tasks; j++)
+				for(var j = 0; j < num_non_drink_tasks; j++)
 				{
 					var rand_pos = Math.floor(Math.random() * avail_tasks.length);
 					var to_add = "task_" + avail_tasks.splice(rand_pos, 1);
 					my_tasks[to_add] = false;
 				}
+				my_tasks["task_4"] = false;
+				my_tasks["task_5"] = false;
 				
 				this.people["people"][i]["tasks"] = my_tasks;
 			}
@@ -579,7 +582,7 @@ class Handler
 		}
 		else
 		{
-			this.respond(JSON.stringify(this.sabotages["sabotages"][id]));
+			this.respond(this.sabotages["sabotages"][id]);
 		}
 	}
 	

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Sabotage</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+		<style>
+			body
+			{
+				background-color: #edf0f5;
+			}
+			
+			#main-panel
+			{
+				width:80%;
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:50px;
+			}
+			
+		</style>
+		
+		<script>
+		
+		var sabotageId = -1;
+		var refreshInterval;
+		
+		function startButtonPressed()
+		{
+			clearInterval(refreshInterval);
+			
+			$("#donePanel").hide();
+			
+			var id = parseInt($("#sabotage_id").val());
+			sabotageId = id;
+			
+			refreshInterval = setInterval(refreshSabotage, 1000);
+			
+		}
+		
+		function refreshSabotage()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "getSabotage",
+					"id": sabotageId
+				}), success: function(res)
+				{
+					console.log(res.data);
+					var sabotage = res.data;
+					//window.location.href = "player.html";
+					
+					if(sabotage.happening)
+					{
+						var diff = Date.now() - sabotage.time;
+						diff = diff / 1000;
+						diff = sabotage.total_time - diff;
+						time_string = Math.round(diff,2) + "s";
+						$("#detailsText2").html(sabotage.name + " (" + time_string + ")");
+						$("#happeningPanel").show();
+						$("#waitingPanel").hide();
+					}
+					else
+					{
+						$("#detailsText1").html(sabotage.name);
+						$("#happeningPanel").hide();
+						$("#waitingPanel").show();
+					}
+					
+				}
+			});
+		}
+		
+		function stopSabotage()
+		{
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "endSabotage",
+					"id": sabotageId
+				}), success: function(res)
+				{
+					console.log(res.data);
+					
+				}
+			});
+		}
+		
+		
+		</script>
+	</head>
+	<body>
+		
+		
+		<div id="main-panel" class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="font-size:14px;margin-top:7px">
+						Sabotage Console
+					</div>
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<input type="submit" class="btn btn-success" id="start_button" value="Start" style="width:100%" onclick="startButtonPressed()">
+					</div>
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<input type="text" class="form-control" id="sabotage_id">
+					</div>
+				</div>
+			</div>
+			<div id="waitingPanel" class="panel-body">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>All clear!</h3>
+						<h4 id="detailsText1"></h4>
+					</div>
+				</div>
+			</div>
+			<div id="happeningPanel" class="panel-body" style="display:none">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<h3>SABOTAGE!</h3>
+						<h4 id="detailsText2"></h4>
+					</div>
+				</div>
+				<div class="row" style="margin-top:10px">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button type="button" class="btn btn-primary" onclick="stopSabotage()">Stop Sabotage</button>
+					</div>
+				</div>
+			
+			</div>
+			
+		</div>
+	</body>
+</html>

@@ -21,9 +21,9 @@ app.get("/task.html", (req, res) =>
 {	
 	res.sendFile(__dirname + '/task.html');
 });
-app.get("/sabotagedevice.html", (req, res) =>
+app.get("/sabotage.html", (req, res) =>
 {	
-	res.sendFile(__dirname + '/sabotagedevice.html');
+	res.sendFile(__dirname + '/sabotage.html');
 });
 
 

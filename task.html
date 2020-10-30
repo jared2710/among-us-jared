@@ -670,6 +670,77 @@
 			setTimeout(startButtonPressed, 3000);
 		}
 		
+		function initTask5()
+		{
+			$("#task5_button").removeClass("btn-primary");
+			$("#task5_button").removeClass("btn-success");
+			$("#task5_button").removeClass("btn-warning");
+			$("#task5_button").removeClass("btn-danger");
+			$("#task5_button").addClass("btn-primary");
+			setTimeout(task5_flashColour, 500);
+		}
+		
+		function task5_flashColour()
+		{
+			if($("#task_5").css("display") == "none")
+			{
+				$("#task5_button").removeClass("btn-primary");
+				$("#task5_button").removeClass("btn-success");
+				$("#task5_button").removeClass("btn-warning");
+				$("#task5_button").removeClass("btn-danger");
+				$("#task5_button").addClass("btn-primary");
+			}
+			else
+			{
+				if($("#task5_button").hasClass("btn-primary"))
+				{
+					$("#task5_button").removeClass("btn-primary");
+					$("#task5_button").addClass("btn-success");
+				}
+				else if($("#task5_button").hasClass("btn-success"))
+				{
+					$("#task5_button").removeClass("btn-success");
+					$("#task5_button").addClass("btn-warning");
+				}
+				else if($("#task5_button").hasClass("btn-warning"))
+				{
+					$("#task5_button").removeClass("btn-warning");
+					$("#task5_button").addClass("btn-danger");
+				}
+				else if($("#task5_button").hasClass("btn-danger"))
+				{
+					$("#task5_button").removeClass("btn-danger");
+					$("#task5_button").addClass("btn-primary");
+				}
+				
+				setTimeout(task5_flashColour, 500);
+			}
+			
+		}
+		
+		function doneTask5()
+		{
+			closeTasks();
+			$("#donePanelText").html("Player " + playerId + " done with Task " + taskId);
+			$("#donePanel").show();
+			
+			$.ajax({
+				url: '/',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					"type": "doTaskForPerson",
+					"id": taskId,
+					"person_id": playerId
+				}), success: function(res)
+				{
+					console.log(res.data);
+				}
+			});
+			
+			setTimeout(startButtonPressed, 3000);
+		}
+		
 		</script>
 	</head>
 	<body>
@@ -727,6 +798,7 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 0</h3>
+						<h4>Start reactor using launch code</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
@@ -778,6 +850,7 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 1</h3>
+						<h4>Test sequential weapons memory</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
@@ -820,6 +893,7 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 2</h3>
+						<h4>Complete psychometric survey</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
@@ -918,6 +992,7 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 3</h3>
+						<h4>Calibrate electrical repeaters</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
@@ -949,11 +1024,12 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 4</h3>
+						<h4>Shot with a fellow crewmate</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:10px">
 					<div id="task4Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
-						<button id="task4_button" class="btn btn-primary" onclick="doneTask4()">Drink consumed</button>
+						<button id="task4_button" class="btn btn-primary" onclick="doneTask4()">Shot with crewmate</button>
 					</div>
 				</div>
 			
@@ -963,10 +1039,12 @@
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
 						<h3>Task 5</h3>
+						<h4>Down a glass of punch with a fellow crewmate</h4>
 					</div>
 				</div>
 				<div class="row" style="margin-top:0px">
 					<div id="task5Body" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center">
+						<button id="task5_button" class="btn btn-primary" onclick="doneTask5()">Punch with crewmate</button>
 					</div>
 				</div>
 			
